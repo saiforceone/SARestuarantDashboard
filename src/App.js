@@ -1,8 +1,13 @@
+import { Provider } from 'react-redux';
 import logo from './logo.svg';
 import './App.css';
+import {configureStore} from './store';
+
+const store = configureStore();
 
 function App() {
   return (
+    <Provider store={store}>
     <div className="App">
       <header className="App-header">
         <img src={logo} className="App-logo" alt="logo" />
@@ -19,6 +24,7 @@ function App() {
         </a>
       </header>
     </div>
+    </Provider>
   );
 }
 
