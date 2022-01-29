@@ -17,3 +17,5 @@ class ActionCreatorUtils {
     };
   }
 }
+
+export default ActionCreatorUtils;

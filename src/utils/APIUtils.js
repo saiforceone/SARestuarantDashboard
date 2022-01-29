@@ -33,7 +33,7 @@ class APIUtils {
    * @param {string} endpoint - Specifies the endpoint for the get request
    * @param {string} queryObject - Specifies options to query by
    * @param {boolean} requiresAuth - Indicates if the request should use authentication via JWT
-   * @returns {*}
+   * @returns {{data: *, error: String, statusCode: Number, success: Boolean}}
    */
   static async getDataFromAPI({endpoint = '', queryObject = {}, requiresAuth = false}) {
     const response = this.buildResponse();
@@ -50,12 +50,12 @@ class APIUtils {
 
       if (requiresAuth) {
         const tokenData = StorageUtils.getValueFromStorage({
-          key: STORAGE_CONSTANTS.KEY_AUTH_TOKEN
+          key: STORAGE_CONSTANTS.KEY_AUTH_TOKEN,
         });
 
         if (!tokenData.data) {
           response.error = tokenData.error;
-          return result;
+          return response;
         }
 
         headers.authorization = tokenData.data;
@@ -75,6 +75,7 @@ class APIUtils {
       response.error = responseData.error;
       response.statusCode = !!response.data ? STATUS_CODES.OK : STATUS_CODES.NOT_FOUND;
       response.success = responseData.success;
+      return response;
     } catch (e) {
       response.error = e.toString();
       response.statusCode = STATUS_CODES.BAD_REQUEST;

@@ -21,6 +21,8 @@ export default (state = INITIAL_STATE, action) => {
       return {...state, lastError: payload};
     case APP_ACTIONS.SET_USER_PROFILE:
       return {...state, userProfile: payload};
+    case APP_ACTIONS.UNSET_DATA:
+      return INITIAL_STATE;
     default:
       return state;
   }

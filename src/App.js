@@ -2,6 +2,7 @@ import { Provider } from 'react-redux';
 import logo from './logo.svg';
 import './App.css';
 import {configureStore} from './store';
+import Example from './components/Example';
 
 const store = configureStore();
 
@@ -23,6 +24,7 @@ function App() {
           Learn React
         </a>
       </header>
+      <Example />
     </div>
     </Provider>
   );

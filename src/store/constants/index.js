@@ -1,3 +1,11 @@
+export const ACTION_SUFFIXES = {
+  SET_DATA: '_SET_DATA',
+  SET_ERROR: '_SET_ERROR',
+  SET_REQ_IN_PROGRESS: '_SET_REQ_IN_PROGRESS',
+  SET_TOTAL_COUNT: '_SET_TOTAL_COUNT',
+  UNSET_DATA: '_UNSET_DATA',
+};
+
 const generateCommonActions = ({prefix = ''}) => ({
   SET_DATA: `${prefix}_SET_DATA`,
   SET_ERROR: `${prefix}_SET_LAST_ERROR`,
@@ -13,6 +21,10 @@ export const APP_ACTIONS = {
   SET_LAST_ERROR: 'APP_SET_LAST_ERROR',
   SET_USER_PROFILE: 'APP_SET_USER_PROFILE',
   UNSET_DATA: 'APP_UNSET_DATA',
+};
+
+export const MENU_ITEM_ACTIONS = {
+  ...generateCommonActions({prefix: 'MENU_ITEMS'}),
 };
 
 export const ORDER_ACTIONS = {
