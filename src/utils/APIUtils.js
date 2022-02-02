@@ -169,6 +169,8 @@ class APIUtils {
         authorization: token,
       };
 
+      const url = `${API_ENDPOINTS.BASE}${endpoint}/${id}`;
+
       const {data: responseData} = await axios.delete(url, {headers});
 
       response.error = responseData.error;

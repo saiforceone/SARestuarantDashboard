@@ -10,10 +10,11 @@ import { ERROR_STRINGS, ERROR_VALUES } from './actionConstants';
  * @function loginUserAction
  * @param {String} username
  * @param {String} password
+ * @param {Object} navigate React router navigate hook to navigate the user to the dashboard page
  * @returns {Function}
  * @description Attempts to log the user in with the supplied username and password
  */
-export const loginUserAction = ({username, password}) => {
+export const loginUserAction = ({username, password, navigate}) => {
   return async dispatch => {
     dispatch(ActionCreatorUtils.buildAction(
       APP_ACTIONS.SET_IS_AUTHENTICATING,
@@ -57,6 +58,8 @@ export const loginUserAction = ({username, password}) => {
         key: STORAGE_CONSTANTS.KEY_AUTH_TOKEN,
         value: token,
       });
+
+      navigate('/dashboard', {replace: true});
     } catch (e) {
       dispatch(ActionCreatorUtils.buildAction(
         APP_ACTIONS.SET_LAST_ERROR,
@@ -72,10 +75,11 @@ export const loginUserAction = ({username, password}) => {
 
 /**
  * @function logoutAction
+ * @param {Function} navigate
  * @returns {Function}
  * @description Logs the user out. Can be modified to redirect the user to login page.
  */
-export const logoutAction = () => {
+export const logoutAction = ({navigate}) => {
   return dispatch => {
     dispatch(ActionCreatorUtils.buildAction(
       APP_ACTIONS.UNSET_DATA,
@@ -83,5 +87,8 @@ export const logoutAction = () => {
     StorageUtils.deleteValueUsingKey({
       key: STORAGE_CONSTANTS.KEY_AUTH_TOKEN,
     });
+    if (typeof navigate === 'function') {
+      navigate('/', {replace: true});
+    }
   }
 };

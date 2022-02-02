@@ -1,31 +1,25 @@
 import { Provider } from 'react-redux';
-import logo from './logo.svg';
 import './App.css';
+import {
+  BrowserRouter,
+  Routes,
+  Route
+} from 'react-router-dom';
 import {configureStore} from './store';
-import Example from './components/Example';
+import DashboardPage from './pages/DashboardPage/DashboardPage';
+import LoginPage from './pages/LoginPage/LoginPage';
 
 const store = configureStore();
-
+// TODO: implement some kind of authorized routes
 function App() {
   return (
     <Provider store={store}>
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-      <Example />
-    </div>
+      <BrowserRouter>
+        <Routes>
+          <Route exact path='/' element={<LoginPage />} />
+          <Route exact path='/dashboard' element={<DashboardPage />} />
+        </Routes>
+      </BrowserRouter>
     </Provider>
   );
 }
