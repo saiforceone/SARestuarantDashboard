@@ -130,7 +130,7 @@ class APIUtils {
       let url = `${API_ENDPOINTS.BASE}${endpoint}`;
 
       if (id) {
-        url += `/${id}`;
+        url += `${id}`;
       }
 
       const {data: responseData} = id 
