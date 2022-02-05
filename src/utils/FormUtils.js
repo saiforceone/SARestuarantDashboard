@@ -15,6 +15,23 @@ export const FIELD_TYPES = {
  */
 export const RestaurantStructure = () => ({
   targetEndpoint: API_ENDPOINTS.LOCATIONS,
+  emptyData: {
+    locationName: '',
+    address: {
+        address1: '',
+        address2: '',
+        geo: []
+    },
+    seatingCapacity: 0,
+    openForBusiness: false,
+    servicesAvailable: [],
+    contactDetails: {
+        primaryPhone: '',
+        primaryEmail: '',
+        website: ''
+    },
+    images: []
+  },
   formFieldDefs: [
     {
       label: 'Restaurant Id',

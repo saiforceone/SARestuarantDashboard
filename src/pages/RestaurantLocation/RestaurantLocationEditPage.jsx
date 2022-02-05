@@ -54,6 +54,14 @@ const renderEditForm = ({restaurantData, onEditFormData, onSaveAction}) => {
     if (field.fieldType === FIELD_TYPES.FIELD_GROUP) {
       const groupedFields = field.fields.map((innerField, innerFieldIndex) => {
         if (innerField.fieldType === FIELD_TYPES.TEXT) {
+          let actualValue;
+
+          if(restaurantData[field.parentValueKey]) {
+            if (restaurantData[field.parentValueKey][innerField.valueKey]) {
+              actualValue = restaurantData[field.parentValueKey][innerField.valueKey]
+            }
+          }
+
           return (
             <input
               key={`form-field-${index}-grouped-${innerFieldIndex}`}
@@ -62,7 +70,7 @@ const renderEditForm = ({restaurantData, onEditFormData, onSaveAction}) => {
                 value: e.target.value,
                 isMultipartKey: true,
               })}
-              value={restaurantData[field.parentValueKey][innerField.valueKey]}
+              value={actualValue}
             />
           );
         }
@@ -124,12 +132,18 @@ const RestaurantlocationEditPage = () => {
       setResourceId(params.id);
     }
     
-    const {state: {location: restaurantLocation}} = location;
-    if (restaurantLocation) {
-      setRestaurantData(restaurantLocation);
-      if(!resourceId) setResourceId(restaurantLocation._id);
+    const {state} = location;
+    console.log('state: ', state);
+    if (state) {
+      const {location: restaurantLocation} = state;
+      if (restaurantLocation) {
+        setRestaurantData(restaurantLocation);
+        if(!resourceId) setResourceId(restaurantLocation._id);
+      } else {
+        console.log('oops no location data');
+      }
     } else {
-      console.log('oops no location data');
+      setRestaurantData(RestaurantStructure().emptyData);
     }
   }, []);
 
@@ -147,7 +161,16 @@ const RestaurantlocationEditPage = () => {
       // assume that keys split on '.'
       const keyParts = key.split('.');
       if (keyParts.length == 2) {
-        dataCopy[keyParts[0]][keyParts[1]] = value; // TODO: find a better to do this :'(
+        console.log('value for multi part key: ', value);
+        console.log('key parts: ', keyParts);
+        if (dataCopy[keyParts[0]]) {
+          dataCopy[keyParts[0]][keyParts[1]] = value; // TODO: find a better to do this :'(
+        } else {
+          dataCopy[keyParts[0]] = {
+            [keyParts[1]]: value
+          };
+          console.log(dataCopy['contactDetails']);
+        }
       }
     } else {
       dataCopy[key] = value;
