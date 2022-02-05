@@ -2,6 +2,7 @@ import React, {useCallback, useEffect, useState} from 'react';
 import {useLocation, useParams} from 'react-router';
 import { API_ENDPOINTS } from '../../constants';
 import APIUtils from '../../utils/APIUtils';
+import { FIELD_TYPES, RestaurantStructure } from '../../utils/FormUtils';
 
 /**
  * @function renderEditForm
@@ -15,26 +16,93 @@ const renderEditForm = ({restaurantData, onEditFormData, onSaveAction}) => {
     <div>
       <p>Form unavailable</p>
     </div>
-  )
+  );
+
+  const formToRender = RestaurantStructure().formFieldDefs.map((field, index) => {
+    if (field.fieldType === FIELD_TYPES.TEXT_ID) {
+      return (
+        <input
+          key={`form-field-${index}`}
+          value={restaurantData[field.valueKey]}
+          {...field.fieldProps}
+        />
+      );
+    }
+    if (field.fieldType === FIELD_TYPES.TEXT) {
+      return (
+        <input 
+          key={`form-field-${index}`}
+          onChange={e => onEditFormData({key: field.valueKey, value: e.target.value})}
+          value={restaurantData[field.valueKey]}
+        />
+      );
+    }
+    if (field.fieldType === FIELD_TYPES.TEXT_ARRAY) {
+      return (
+        <input
+          key={`form-field-${index}`}
+          onChange={e => {
+            onEditFormData({
+              key: field.valueKey,
+              value: e.target.value.split(','),
+            });
+          }}
+          value={restaurantData[field.valueKey]}
+        />
+      )
+    }
+    if (field.fieldType === FIELD_TYPES.FIELD_GROUP) {
+      const groupedFields = field.fields.map((innerField, innerFieldIndex) => {
+        if (innerField.fieldType === FIELD_TYPES.TEXT) {
+          return (
+            <input
+              key={`form-field-${index}-grouped-${innerFieldIndex}`}
+              onChange={e => onEditFormData({
+                key: `${field.parentValueKey}.${innerField.valueKey}`,
+                value: e.target.value,
+                isMultipartKey: true,
+              })}
+              value={restaurantData[field.parentValueKey][innerField.valueKey]}
+            />
+          );
+        }
+      });
+
+      return (
+        <div>
+          <p>{field.label}</p>
+          {groupedFields}
+        </div>
+      );
+    }
+    if (field.fieldType === FIELD_TYPES.SELECT) {
+      return (
+        <select
+          key={`form-field-${index}`}
+          onChange={e => onEditFormData({key: field.valueKey, value: e.target.value})}
+          value={restaurantData[field.valueKey]}
+        >
+          <option value=''>Select a Value</option>
+          {Array.isArray(field.selectValues) ? field.selectValues.map((optionField, optIndex) => (
+            <option key={`field-${index}-opt-${optIndex}`} value={optionField.value}>
+              {optionField.label}
+            </option>
+          )) : undefined }
+        </select>
+      )
+    }
+  });
+
   return (
     <form onSubmit={e => e.preventDefault()}>
-      <input disabled value={restaurantData._id} />
-      <input 
-        onChange={e => onEditFormData({key: 'locationName', value: e.target.value})}
-        value={restaurantData.locationName}
-      />
-      <input
-        onChange={e => onEditFormData({key: 'seatingCapacity', value: parseInt(e.target.value)})}
-        type='number'
-        value={restaurantData.seatingCapacity}
-      />
+      {formToRender}
       <button
         onClick={onSaveAction}
       >
         save
       </button>
     </form>
-  )
+  );
 };
 
 /**
@@ -67,14 +135,23 @@ const RestaurantlocationEditPage = () => {
 
   /**
    * @function onEditFormData
-   * @param {string} key
-   * @param {*} value
+   * @param {string} key The key that should be updated with the given value
+   * @param {*} value The value that should be set for the given key
+   * @param {boolean} isMultipartKey Indicates if the key should treated as a multi part key
    * @description Handles editing form data
    */
-  const onEditFormData = useCallback(({key, value}) => {
+  const onEditFormData = useCallback(({key, value, isMultipartKey = false}) => {
     const dataCopy = {...restaurantData};
-    // TODO: Implement better functionality to update based on form data structure and field defs
-    dataCopy[key] = value;
+    
+    if (isMultipartKey) {
+      // assume that keys split on '.'
+      const keyParts = key.split('.');
+      if (keyParts.length == 2) {
+        dataCopy[keyParts[0]][keyParts[1]] = value; // TODO: find a better to do this :'(
+      }
+    } else {
+      dataCopy[key] = value;
+    }
 
     setRestaurantData(dataCopy);
   }, [restaurantData]);
