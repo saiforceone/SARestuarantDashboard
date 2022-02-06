@@ -1,12 +1,67 @@
 import { API_ENDPOINTS } from "../constants";
 
 export const FIELD_TYPES = {
+  CHECKBOX_SELECT: 'checkbox-select',
   FIELD_GROUP: 'field-group',
   SELECT: 'select',
   TEXT: 'text',
   TEXT_ARRAY: 'text-array',
   TEXT_ID: 'text-id',
 };
+
+/**
+ * @function MenuitemStructure
+ * @returns {object}
+ * @description Returns a menu item structure that can be used to render a menu item form
+ */
+export const MenuItemStructure = () => ({
+  targetEndpoint: API_ENDPOINTS.MENU_ITEMS,
+  emptyData: {
+    itemName: '',
+    description: '',
+    baseCost: 0,
+    mainImage: '',
+    averageRating: 0
+  },
+  formFieldDefs: [
+    {
+      label: 'Item Id',
+      fieldType: FIELD_TYPES.TEXT_ID,
+      valueKey: '_id',
+      valueType: 'text'
+    },
+    {
+      label: 'Item Name',
+      fieldType: FIELD_TYPES.TEXT,
+      valueKey: 'itemName',
+      valueType: 'text'
+    },
+    {
+      label: 'Description',
+      fieldType: FIELD_TYPES.TEXT,
+      valueKey: 'description',
+      valueType: 'text',
+    },
+    {
+      label: 'Item Cost',
+      fieldType: FIELD_TYPES.TEXT,
+      valueKey: 'baseCost',
+      valueType: 'number',
+    },
+    {
+      label: 'Main Image URL',
+      fieldType: FIELD_TYPES.TEXT,
+      valueKey: 'mainImage',
+      valueType: 'text'
+    },
+    {
+      label: 'Average Rating (read only)',
+      fieldType: FIELD_TYPES.TEXT_ID,
+      valueKey: 'averageRating',
+      valueType: 'number',
+    },
+  ],
+});
 
 /**
  * @function RestaurantStructure

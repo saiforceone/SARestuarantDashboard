@@ -9,6 +9,8 @@ import {
 import {configureStore} from './store';
 import DashboardPage from './pages/DashboardPage/DashboardPage';
 import LoginPage from './pages/LoginPage/LoginPage';
+import MenuItemListPage from './pages/MenuItem/MenuItemListPage';
+import MenuItemEditPage from './pages/MenuItem/MenuItemEditPage';
 import RestaurantLocationListPage from './pages/RestaurantLocation/RestaurantLocationListPage';
 import RestaurantlocationEditPage from './pages/RestaurantLocation/RestaurantLocationEditPage';
 
@@ -19,11 +21,15 @@ function App() {
     <Provider store={store}>
       <BrowserRouter>
         <div>
+          <Link to='/menu-items'>Menu Items</Link>
           <Link to='/restaurant-locations'>Restaurants</Link>
         </div>
         <Routes>
           <Route exact path='/' element={<LoginPage />} />
           <Route exact path='/dashboard' element={<DashboardPage />} />
+          <Route path='/menu-items' element={<MenuItemListPage />} />
+          <Route path='/menu-items/:id' element={<MenuItemEditPage />} />
+          <Route path='/menu-items/new' element={<MenuItemEditPage />} />
           <Route path='/restaurant-locations' element={<RestaurantLocationListPage />} />
           <Route path='/restaurant-locations/:id' element={<RestaurantlocationEditPage />} />
           <Route path='/restaurant-locations/new' element={<RestaurantlocationEditPage />} />
