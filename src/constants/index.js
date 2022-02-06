@@ -5,3 +5,22 @@ export const API_ENDPOINTS = {
   ORDERS: '/orders/',
   LOCATIONS: '/restaurant-locations/',
 };
+
+export const ORDER_STATUSES = [
+  {
+    label: 'Received',
+    value: 'received'
+  },
+  {
+    label: 'In Progress',
+    value: 'in-progress'
+  },
+  {
+    label: 'Ready',
+    value: 'ready'
+  },
+  {
+    label: 'Completed',
+    value: 'completed'
+  },
+];
