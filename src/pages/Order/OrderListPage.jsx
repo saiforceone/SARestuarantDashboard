@@ -55,11 +55,11 @@ export default function OrderListPage() {
    */
   const getOrders = useCallback(() => {
     dispatch(fetchOrders({queryObject: {}}));
-  }, []);
+  }, [dispatch]);
 
   useEffect(() => {
     getOrders();
-  }, [])
+  }, [getOrders]);
 
   /**
    * @function viewOrderAction
@@ -73,7 +73,7 @@ export default function OrderListPage() {
         order
       },
     });
-  }, []);
+  }, [navigate]);
 
   const contentProps = {orders: ordersStore.data, viewOrderAction};
 

@@ -63,7 +63,7 @@ export default function OrderDetailsPage() {
       setOrderData(state.order);
       setOrderStatus(state.order.orderStatus);
     }
-  }, []);
+  }, [location, params]);
 
   /**
    * @function onUpdateStatusAction

@@ -8,6 +8,7 @@ const INITIAL_STATE = {
   userProfile: undefined,
 };
 
+/* eslint import/no-anonymous-default-export: [2, {"allowArrowFunction": true}] */
 export default (state = INITIAL_STATE, action) => {
   const {type: actionType, payload} = action;
   switch (actionType) {

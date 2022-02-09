@@ -22,7 +22,7 @@ const DashboardPage = () => {
     if (!tokenData.data) {
       return navigate('/', {replace: true});
     }
-  }, []);
+  }, [navigate]);
 
   /**
    * @function Logout
@@ -32,7 +32,7 @@ const DashboardPage = () => {
     dispatch(logoutAction({
       navigate
     }));
-  }, []);
+  }, [dispatch, navigate]);
 
   return (
     <div>

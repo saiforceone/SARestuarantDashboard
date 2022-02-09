@@ -48,15 +48,15 @@ const MenuItemListPage = () => {
 
   const fetchItems = useCallback(() => {
     dispatch(fetchMenuItems());
-  }, []);
+  }, [dispatch]);
 
   useEffect(() => {
     fetchItems();
-  }, []);
+  }, [fetchItems]);
 
   const addItemAction = useCallback(() => {
     navigate(`${API_ENDPOINTS.MENU_ITEMS}new`);
-  }, []);
+  }, [navigate]);
 
   /**
    * @function editItemAction
@@ -69,7 +69,7 @@ const MenuItemListPage = () => {
     navigate(`${API_ENDPOINTS.MENU_ITEMS}${menuItem._id}`, {
       state: {menuItem},
     });
-  }, [menuItemStore.data]);
+  }, [navigate]);
 
   return (
     <div>

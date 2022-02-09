@@ -74,6 +74,10 @@ const renderEditForm = ({restaurantData, onEditFormData, onSaveAction}) => {
             />
           );
         }
+
+        return (
+          <div />
+        );
       });
 
       return (
@@ -99,6 +103,10 @@ const renderEditForm = ({restaurantData, onEditFormData, onSaveAction}) => {
         </select>
       )
     }
+
+    return (
+      <div />
+    );
   });
 
   return (
@@ -120,10 +128,10 @@ const renderEditForm = ({restaurantData, onEditFormData, onSaveAction}) => {
  */
 const RestaurantlocationEditPage = () => {
 
-  const [isNew, setIsNew] = useState(true);
+  // const [isNew, setIsNew] = useState(true);
   const [resourceId, setResourceId] = useState(undefined);
   const [restaurantData, setRestaurantData] = useState();
-  const [isSaving, setIsSaving] = useState(false);
+  // const [isSaving, setIsSaving] = useState(false);
   const location = useLocation();
   const params = useParams();
 
@@ -145,7 +153,7 @@ const RestaurantlocationEditPage = () => {
     } else {
       setRestaurantData(RestaurantStructure().emptyData);
     }
-  }, []);
+  }, [location, params, resourceId]);
 
   /**
    * @function onEditFormData
@@ -160,7 +168,7 @@ const RestaurantlocationEditPage = () => {
     if (isMultipartKey) {
       // assume that keys split on '.'
       const keyParts = key.split('.');
-      if (keyParts.length == 2) {
+      if (keyParts.length === 2) {
         console.log('value for multi part key: ', value);
         console.log('key parts: ', keyParts);
         if (dataCopy[keyParts[0]]) {
@@ -196,7 +204,7 @@ const RestaurantlocationEditPage = () => {
     }).catch(error => {
       console.log('save error: ', error);
     })
-  }, [restaurantData]);
+  }, [restaurantData, resourceId]);
 
   return (
     <div>

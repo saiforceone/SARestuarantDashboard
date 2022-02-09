@@ -39,11 +39,11 @@ const RestaurantLocationListPage = () => {
 
   const getRestaurants = useCallback(() => {
     dispatch(fetchLocations());
-  }, []);
+  }, [dispatch]);
 
   useEffect(() => {
     getRestaurants();
-  }, []);
+  }, [getRestaurants]);
 
   /**
    * @function onEditLocation
@@ -57,7 +57,7 @@ const RestaurantLocationListPage = () => {
         location,
       },
     });
-  }, []);
+  }, [navigate]);
 
   return (
     <div>

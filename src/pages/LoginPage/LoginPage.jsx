@@ -24,7 +24,7 @@ const LoginPage = () => {
     if (tokenData.data) {
       return navigate('/dashboard', {replace: true});
     }
-  }, []);
+  }, [navigate]);
 
   /**
    * @function onAuth
@@ -41,7 +41,7 @@ const LoginPage = () => {
       password,
       navigate,
     }));
-  }, [username, password, dispatch])
+  }, [username, password, dispatch, navigate])
 
   return (
     <div>

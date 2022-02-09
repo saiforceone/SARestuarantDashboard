@@ -47,6 +47,10 @@ const renderForm = ({menuItemData, editDataAction}) => {
         />
       );
     }
+
+    return (
+      <div/>
+    );
   });
 
   return (
@@ -85,7 +89,7 @@ export default function MenuItemEditPage() {
     } else {
       setMenuItemData(MenuItemStructure().emptyData);
     }
-  }, []);
+  }, [location, params]);
 
   /**
    * @function editData
@@ -121,7 +125,7 @@ export default function MenuItemEditPage() {
     }).catch(e => {
       console.error('Failed to save menu item with error: ', e);
     })
-  }, [menuItemData, resourceId]);
+  }, [menuItemData, resourceId, navigate]);
 
   return (
     <div>
