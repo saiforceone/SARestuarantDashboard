@@ -1,4 +1,5 @@
 import { Provider } from 'react-redux';
+import 'rsuite/dist/rsuite.min.css';
 import './App.css';
 import {
   BrowserRouter,

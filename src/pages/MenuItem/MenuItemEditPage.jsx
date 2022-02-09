@@ -1,6 +1,8 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import {useLocation, useParams} from 'react-router';
 import { useNavigate } from 'react-router';
+import {Button, Container, Form, IconButton, Modal} from 'rsuite';
+import CheckOutlineIcon from '@rsuite/icons/CheckOutline';
 import { API_ENDPOINTS } from '../../constants';
 import APIUtils from '../../utils/APIUtils';
 import { MenuItemStructure, FIELD_TYPES } from '../../utils/FormUtils';
@@ -19,14 +21,24 @@ const renderForm = ({menuItemData, editDataAction}) => {
       <div>
         <p>Oops. Form not ready</p>
       </div>
-    )
+    );
   }
 
+  /**
+   * <Form.Group controlId="name-1">
+      <Form.ControlLabel>Username</Form.ControlLabel>
+      <Form.Control name="name" />
+      <Form.HelpText>Required</Form.HelpText>
+    </Form.Group>
+   */
+
   const content = MenuItemStructure().formFieldDefs.map(field => {
+    let formField;
     if (field.fieldType === FIELD_TYPES.TEXT_ID) {
-      return (
-        <input
+      formField = (
+        <Form.Control
           disabled
+          name={field.valueKey}
           readOnly
           value={menuItemData[field.valueKey]}
         />
@@ -39,24 +51,28 @@ const renderForm = ({menuItemData, editDataAction}) => {
           : val
       }
       
-      return (
-        <input
+      formField = (
+        <Form.Control
+          name={field.valueKey}
           placeholder={field.label}
-          onChange={e => editDataAction({key: field.valueKey, value: actualValue(e.target.value)})}
+          onChange={formVal => editDataAction({key: field.valueKey, value: actualValue(formVal)})}
           value={menuItemData[field.valueKey]}
         />
       );
     }
 
     return (
-      <div/>
+      <Form.Group>
+        <Form.ControlLabel>{field.label}</Form.ControlLabel>
+        {formField}
+      </Form.Group>
     );
   });
 
   return (
-    <div>
+    <Form fluid>
       {content}
-    </div>
+    </Form>
   );
 };
 
@@ -69,6 +85,10 @@ export default function MenuItemEditPage() {
 
   const [menuItemData, setMenuItemData] = useState();
   const [resourceId, setResourceId] = useState();
+  const [isShowingResultModal, setIsShowingResultModal] = useState(false);
+  const [resultModalTitle, setResultModalTitle] = useState('');
+  const [resultModalText, setResultModalText] = useState('');
+  const [successResult, setSuccessResult] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
   const params = useParams();
@@ -108,29 +128,84 @@ export default function MenuItemEditPage() {
   }, [menuItemData]);
 
   /**
+   * @function dismissResultModalAction
+   * @description Dismisses the result modal
+   */
+  const dismissResultModalAction = useCallback(() => {
+    setResultModalText('');
+    setResultModalTitle('');
+    setIsShowingResultModal(false);
+    if (successResult) {
+      setSuccessResult(false);
+      return navigate(`${API_ENDPOINTS.MENU_ITEMS}`);
+    }
+    setSuccessResult(false);
+
+  }, [navigate, successResult]);
+
+  /**
    * @function saveAction
    * @returns {void}
    * @description Attempts to save the menu item
    */
   const saveAction = useCallback(() => {
+    const notSavedTitle = 'Failed to Save Menu Item';
     APIUtils.saveOrUpdateResource({
       endpoint: MenuItemStructure().targetEndpoint,
       id: resourceId,
       data: {data: menuItemData}
     }).then(result => {
       if (result.success) {
-        return navigate(`${API_ENDPOINTS.MENU_ITEMS}`);
+        setResultModalTitle('Saved Menu Item');
+        setResultModalText(
+          'The menu item has been saved. Click ok to go back to the menu list page.'
+        );
+      } else {
+        setResultModalTitle(notSavedTitle);
+        setResultModalText('Something did not quite work with saving this menu item.');
       }
+      setSuccessResult(result.success);
       console.error('Failed to save menu item with result: ', result);
     }).catch(e => {
       console.error('Failed to save menu item with error: ', e);
+      setResultModalTitle(notSavedTitle);
+      setResultModalText(
+        `An unexpected error occurred while trying to save the menu item: ${e.toString()}`
+      );
+    }).finally(() => {
+      setIsShowingResultModal(true);
     })
-  }, [menuItemData, resourceId, navigate]);
+  }, [menuItemData, resourceId]);
 
   return (
-    <div>
+    <Container style={{padding: 10}}>
       {renderForm({menuItemData, editDataAction})}
-      <button onClick={saveAction}>Save Menu Item</button>
-    </div>
+      <IconButton
+        appearance='primary'
+        color='blue'
+        icon={<CheckOutlineIcon />}
+        onClick={saveAction}
+        style={{marginTop: 10}}
+        size={'md'}
+        value='dark'
+      >
+        Save Menu Item
+      </IconButton>
+      <Modal open={isShowingResultModal} onClose={dismissResultModalAction}>
+        <Modal.Header>
+          <Modal.Title>{resultModalTitle}</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <p>
+            {resultModalText}
+          </p>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button onClick={dismissResultModalAction} appearance="primary">
+            Ok
+          </Button>
+        </Modal.Footer>
+      </Modal>
+    </Container>
   );
 }
