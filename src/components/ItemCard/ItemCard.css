@@ -1,0 +1,10 @@
+.item-card {
+  background-color: #f4f4f4;
+  border-radius: 0.25rem;
+  margin-bottom: 1.0rem;
+  padding: 0.5rem;
+}
+
+.item-card h3 {
+  margin-top: 0;
+}

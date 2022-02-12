@@ -1,8 +1,10 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import {useLocation, useParams} from 'react-router';
 import { useNavigate } from 'react-router';
-import {Button, Container, Form, IconButton, Modal} from 'rsuite';
-import CheckOutlineIcon from '@rsuite/icons/CheckOutline';
+import {Button, Form as BootstrapForm} from 'react-bootstrap';
+import {CheckCircleFill as CheckCircleFillIcon} from 'react-bootstrap-icons';
+import {Container, Modal} from 'rsuite';
+
 import { API_ENDPOINTS } from '../../constants';
 import APIUtils from '../../utils/APIUtils';
 import { MenuItemStructure, FIELD_TYPES } from '../../utils/FormUtils';
@@ -36,7 +38,7 @@ const renderForm = ({menuItemData, editDataAction}) => {
     let formField;
     if (field.fieldType === FIELD_TYPES.TEXT_ID) {
       formField = (
-        <Form.Control
+        <BootstrapForm.Control
           disabled
           name={field.valueKey}
           readOnly
@@ -52,7 +54,7 @@ const renderForm = ({menuItemData, editDataAction}) => {
       }
       
       formField = (
-        <Form.Control
+        <BootstrapForm.Control
           name={field.valueKey}
           placeholder={field.label}
           onChange={formVal => editDataAction({key: field.valueKey, value: actualValue(formVal)})}
@@ -62,17 +64,30 @@ const renderForm = ({menuItemData, editDataAction}) => {
     }
 
     return (
-      <Form.Group>
-        <Form.ControlLabel>{field.label}</Form.ControlLabel>
+      <BootstrapForm.Group className='mb-3'>
+        {field.valueKey === 'mainImage' ? (
+          <div>
+            <img
+              className='img-fluid mb-3'
+              style={{objectFit: 'cover', height: 400, width: '100%'}}
+              src={menuItemData[field.valueKey]}
+            />
+          </div>
+        ) : (
+          <div className='d-flex'>
+            <p>No image URL has been specified. Paste one below.</p>
+          </div>
+        )}
+        <BootstrapForm.Label>{field.label}</BootstrapForm.Label>
         {formField}
-      </Form.Group>
+      </BootstrapForm.Group>
     );
   });
 
   return (
-    <Form fluid>
+    <BootstrapForm fluid>
       {content}
-    </Form>
+    </BootstrapForm>
   );
 };
 
@@ -180,17 +195,14 @@ export default function MenuItemEditPage() {
   return (
     <Container style={{padding: 10}}>
       {renderForm({menuItemData, editDataAction})}
-      <IconButton
-        appearance='primary'
-        color='blue'
-        icon={<CheckOutlineIcon />}
+      <Button
         onClick={saveAction}
         style={{marginTop: 10}}
-        size={'md'}
-        value='dark'
+        variant='success'
       >
+        <CheckCircleFillIcon className='me-2' />
         Save Menu Item
-      </IconButton>
+      </Button>
       <Modal open={isShowingResultModal} onClose={dismissResultModalAction}>
         <Modal.Header>
           <Modal.Title>{resultModalTitle}</Modal.Title>

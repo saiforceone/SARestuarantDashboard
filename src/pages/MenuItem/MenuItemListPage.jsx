@@ -1,8 +1,11 @@
 import React, {useCallback, useEffect} from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router';
+import {Badge, Button} from 'react-bootstrap';
+import {StarFill as StarIcon} from 'react-bootstrap-icons';
 import { API_ENDPOINTS } from '../../constants';
 import {fetchMenuItems} from '../../store/actions/menuActions';
+import { ItemCard } from '../../components/ItemCard/ItemCard';
 
 /**
  * @function renderContent
@@ -14,16 +17,30 @@ import {fetchMenuItems} from '../../store/actions/menuActions';
 const renderContent = ({menuItems = [], editItemAction}) => {
 
   const content = menuItems.length ? menuItems.map(item => (
-    <div
+    <ItemCard
       key={`menu-item-${item._id}`}
-    >
-      <p>{item.itemName}</p>
-      <button
-        onClick={() => editItemAction({menuItem: item})}
-      >
-        Edit
-      </button>
-    </div>
+      imageUrl={item.mainImage}
+      title={item.itemName}
+      cardActions={
+        <React.Fragment>
+          <Button
+            onClick={() => editItemAction({menuItem: item})}
+            variant='primary'
+          >
+            Edit
+          </Button>
+        </React.Fragment>
+      }
+      extraContent={
+        <React.Fragment>
+          <Badge bg='secondary'>${item.baseCost}</Badge>
+          <Badge bg='secondary' className='ms-2'>
+            <StarIcon className='me-2' />
+            <span>{item.averageRating}</span>
+          </Badge>
+        </React.Fragment>
+      }
+    />
   )) : (
     <p>No menu items</p>
   );
