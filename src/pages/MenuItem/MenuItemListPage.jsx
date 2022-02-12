@@ -2,10 +2,16 @@ import React, {useCallback, useEffect} from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router';
 import {Badge, Button} from 'react-bootstrap';
-import {StarFill as StarIcon} from 'react-bootstrap-icons';
+import {
+  ArrowClockwise as RefreshIcon,
+  PencilSquare as PencilIcon,
+  PlusCircleFill as PlusIcon,
+  StarFill as StarIcon
+} from 'react-bootstrap-icons';
 import { API_ENDPOINTS } from '../../constants';
 import {fetchMenuItems} from '../../store/actions/menuActions';
 import { ItemCard } from '../../components/ItemCard/ItemCard';
+import PageHeader from '../../components/PageHeader/PageHeader';
 
 /**
  * @function renderContent
@@ -27,6 +33,7 @@ const renderContent = ({menuItems = [], editItemAction}) => {
             onClick={() => editItemAction({menuItem: item})}
             variant='primary'
           >
+            <PencilIcon className='me-2' />
             Edit
           </Button>
         </React.Fragment>
@@ -90,9 +97,22 @@ const MenuItemListPage = () => {
 
   return (
     <div>
-      <h2>Menu Items</h2>
-      <button onClick={addItemAction}>Add Menu Item</button>
-      <button onClick={fetchItems}>Refresh</button>
+      <PageHeader
+        heading='Menu Items'
+        subheading={`Items Found: ${menuItemStore.data.length}`}
+        actionsContainer={
+          <React.Fragment>
+            <Button onClick={addItemAction}>
+              <PlusIcon className='me-2' />
+              Add Menu Item
+            </Button>
+            <Button className='ms-2' onClick={fetchItems}>
+              <RefreshIcon className='me-2' />
+              Refresh
+            </Button>
+          </React.Fragment>
+        }
+      />
       {renderContent({menuItems: menuItemStore.data, editItemAction})}
     </div>
   );

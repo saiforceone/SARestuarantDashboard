@@ -8,6 +8,7 @@ import {Container, Modal} from 'rsuite';
 import { API_ENDPOINTS } from '../../constants';
 import APIUtils from '../../utils/APIUtils';
 import { MenuItemStructure, FIELD_TYPES } from '../../utils/FormUtils';
+import PageHeader from '../../components/PageHeader/PageHeader';
 
 /**
  * @function renderForm
@@ -26,19 +27,12 @@ const renderForm = ({menuItemData, editDataAction}) => {
     );
   }
 
-  /**
-   * <Form.Group controlId="name-1">
-      <Form.ControlLabel>Username</Form.ControlLabel>
-      <Form.Control name="name" />
-      <Form.HelpText>Required</Form.HelpText>
-    </Form.Group>
-   */
-
   const content = MenuItemStructure().formFieldDefs.map(field => {
     let formField;
     if (field.fieldType === FIELD_TYPES.TEXT_ID) {
       formField = (
         <BootstrapForm.Control
+          key={`field-${field.valueKey}`}
           disabled
           name={field.valueKey}
           readOnly
@@ -55,6 +49,7 @@ const renderForm = ({menuItemData, editDataAction}) => {
       
       formField = (
         <BootstrapForm.Control
+          key={`field-${field.valueKey}`}
           name={field.valueKey}
           placeholder={field.label}
           onChange={formVal => editDataAction({key: field.valueKey, value: actualValue(formVal)})}
@@ -65,7 +60,7 @@ const renderForm = ({menuItemData, editDataAction}) => {
 
     return (
       <BootstrapForm.Group className='mb-3'>
-        {field.valueKey === 'mainImage' ? (
+        {(field.valueKey === 'mainImage' && menuItemData['mainImage']) && (
           <div>
             <img
               className='img-fluid mb-3'
@@ -73,7 +68,8 @@ const renderForm = ({menuItemData, editDataAction}) => {
               src={menuItemData[field.valueKey]}
             />
           </div>
-        ) : (
+        )}
+        {(field.valuekey === 'mainImage' && !menuItemData['mainImage']) && (
           <div className='d-flex'>
             <p>No image URL has been specified. Paste one below.</p>
           </div>
@@ -194,15 +190,23 @@ export default function MenuItemEditPage() {
 
   return (
     <Container style={{padding: 10}}>
+      <PageHeader
+        backButtonAction={() => navigate(-1)}
+        heading={`${resourceId ? 'Edit Menu Item' : 'New Menu Item'}`}
+        subheading={`${menuItemData ? menuItemData.itemName : ''}`}
+        actionsContainer={
+          <Button
+            onClick={saveAction}
+            style={{marginTop: 10}}
+            variant='success'
+          >
+            <CheckCircleFillIcon className='me-2' />
+            Save Menu Item
+          </Button>
+        }
+      />
       {renderForm({menuItemData, editDataAction})}
-      <Button
-        onClick={saveAction}
-        style={{marginTop: 10}}
-        variant='success'
-      >
-        <CheckCircleFillIcon className='me-2' />
-        Save Menu Item
-      </Button>
+      
       <Modal open={isShowingResultModal} onClose={dismissResultModalAction}>
         <Modal.Header>
           <Modal.Title>{resultModalTitle}</Modal.Title>
