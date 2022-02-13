@@ -1,8 +1,19 @@
 import React, {useCallback, useEffect} from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import {Badge} from 'react-bootstrap';
+import {
+  ArrowClockwise as RefreshIcon,
+  GeoAltFill as LocationIcon,
+  PersonFill as UserIcon,
+  InfoSquareFill as OrderStatusIcon,
+  WalletFill as MoneyIcon,
+} from 'react-bootstrap-icons';
 import { useNavigate } from 'react-router';
 import { API_ENDPOINTS } from '../../constants';
+import PageHeader from '../../components/PageHeader/PageHeader';
 import {fetchOrders} from '../../store/actions/orderActions';
+import {ItemCard} from '../../components/ItemCard/ItemCard';
+import FormattingUtils from '../../utils/FormattingUtils';
 
 /**
  * @function RenderOrder
@@ -14,20 +25,41 @@ import {fetchOrders} from '../../store/actions/orderActions';
 const RenderOrder = ({orders = [], viewOrderAction}) => {
 
   const content = orders.map(order => (
-    <div
+    <ItemCard
       key={`order-${order._id}`}
-    >
-      <p>Order #: {order._id}</p>
-      <p>Order Status: {order.orderStatus}</p>
-      <p>Order Location: {order.relatedLocation.locationName}</p>
-      <p>Customer: {order.relatedUser.username}</p>
-      <p>Order Date: {order.orderDate}</p>
-      <button
-        onClick={e => viewOrderAction({order})}
-      >
-        View / Update Order Status
-      </button>
-    </div>
+      title={`Order #: ${order._id}`}
+      subtitle={`Order Date: ${FormattingUtils.formatAsDate({value: order.orderDate})}`}
+      cardActions={
+        <React.Fragment>
+          <button
+            className='btn btn-primary'
+            onClick={e => viewOrderAction({order})}
+          >
+            View / Update Order Status
+          </button>
+        </React.Fragment>
+      }
+      extraContent={
+        <React.Fragment>
+          <Badge bg='primary' className='me-2'>
+            <MoneyIcon className='me-1' />
+            <span>${order.orderTotal}</span>
+          </Badge>
+          <Badge bg='secondary' className='me-2'>
+            <LocationIcon className='me-1' />
+            {order.relatedLocation.locationName}
+          </Badge>
+          <Badge bg='secondary' className='me-2'>
+            <OrderStatusIcon className='me-1' />
+            {order.orderStatus}
+          </Badge>
+          <Badge bg='secondary' className='me-2'>
+            <UserIcon className='me-1' />
+            {order.relatedUser.username}
+          </Badge>
+        </React.Fragment>
+      }
+    />
   ));
 
   return (
@@ -79,8 +111,21 @@ export default function OrderListPage() {
 
   return (
     <div>
-      <h1>Orders</h1>
-      <button onClick={getOrders}>Refresh</button>
+      <PageHeader
+        heading='Orders'
+        subheading={`Orders found: ${ordersStore.data.length}`}
+        actionsContainer={
+          <React.Fragment>
+            <button
+              className='btn btn-primary'
+              onClick={getOrders}
+            >
+              <RefreshIcon className='me-2' />
+              Refresh
+            </button>
+          </React.Fragment>
+        }
+      />
       <RenderOrder {...contentProps} />
     </div>
   );
