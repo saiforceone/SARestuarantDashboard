@@ -1,8 +1,11 @@
 import React, {useCallback, useEffect, useState} from 'react';
-import {useLocation, useParams} from 'react-router';
+import {useLocation, useNavigate, useParams} from 'react-router';
+import { Form } from 'react-bootstrap';
+import { CheckCircleFill as SaveIcon } from 'react-bootstrap-icons';
 import { API_ENDPOINTS } from '../../constants';
 import APIUtils from '../../utils/APIUtils';
 import { FIELD_TYPES, RestaurantStructure } from '../../utils/FormUtils';
+import PageHeader from '../../components/PageHeader/PageHeader';
 
 /**
  * @function renderEditForm
@@ -19,9 +22,11 @@ const renderEditForm = ({restaurantData, onEditFormData, onSaveAction}) => {
   );
 
   const formToRender = RestaurantStructure().formFieldDefs.map((field, index) => {
+    let formControl;
     if (field.fieldType === FIELD_TYPES.TEXT_ID) {
-      return (
-        <input
+      formControl = (
+        <Form.Control
+          className='mb-3'
           key={`form-field-${index}`}
           value={restaurantData[field.valueKey]}
           {...field.fieldProps}
@@ -29,8 +34,9 @@ const renderEditForm = ({restaurantData, onEditFormData, onSaveAction}) => {
       );
     }
     if (field.fieldType === FIELD_TYPES.TEXT) {
-      return (
-        <input 
+      formControl = (
+        <Form.Control
+          className='mb-3'
           key={`form-field-${index}`}
           onChange={e => onEditFormData({key: field.valueKey, value: e.target.value})}
           value={restaurantData[field.valueKey]}
@@ -38,8 +44,8 @@ const renderEditForm = ({restaurantData, onEditFormData, onSaveAction}) => {
       );
     }
     if (field.fieldType === FIELD_TYPES.TEXT_ARRAY) {
-      return (
-        <input
+      formControl = (
+        <Form.Control
           key={`form-field-${index}`}
           onChange={e => {
             onEditFormData({
@@ -53,6 +59,7 @@ const renderEditForm = ({restaurantData, onEditFormData, onSaveAction}) => {
     }
     if (field.fieldType === FIELD_TYPES.FIELD_GROUP) {
       const groupedFields = field.fields.map((innerField, innerFieldIndex) => {
+        let innerFormControl;
         if (innerField.fieldType === FIELD_TYPES.TEXT) {
           let actualValue;
 
@@ -62,8 +69,9 @@ const renderEditForm = ({restaurantData, onEditFormData, onSaveAction}) => {
             }
           }
 
-          return (
-            <input
+          innerFormControl = (
+            <Form.Control
+              className='mb-2'
               key={`form-field-${index}-grouped-${innerFieldIndex}`}
               onChange={e => onEditFormData({
                 key: `${field.parentValueKey}.${innerField.valueKey}`,
@@ -76,20 +84,24 @@ const renderEditForm = ({restaurantData, onEditFormData, onSaveAction}) => {
         }
 
         return (
-          <div />
+          <Form.Group>
+            <Form.Label className='text-decoration-underline'>{innerField.label}</Form.Label>
+            {innerFormControl}
+          </Form.Group>
         );
       });
 
       return (
         <div>
-          <p>{field.label}</p>
+          <Form.Label><strong>{field.label}</strong></Form.Label>
           {groupedFields}
         </div>
       );
     }
     if (field.fieldType === FIELD_TYPES.SELECT) {
-      return (
-        <select
+      formControl = (
+        <Form.Select
+          className='mb-3'
           key={`form-field-${index}`}
           onChange={e => onEditFormData({key: field.valueKey, value: e.target.value})}
           value={restaurantData[field.valueKey]}
@@ -100,24 +112,22 @@ const renderEditForm = ({restaurantData, onEditFormData, onSaveAction}) => {
               {optionField.label}
             </option>
           )) : undefined }
-        </select>
+        </Form.Select>
       )
     }
 
     return (
-      <div />
+      <Form.Group className='mb-4'>
+        <Form.Label><strong>{field.label}</strong></Form.Label>
+        {formControl}
+      </Form.Group>
     );
   });
 
   return (
-    <form onSubmit={e => e.preventDefault()}>
+    <Form onSubmit={e => e.preventDefault()}>
       {formToRender}
-      <button
-        onClick={onSaveAction}
-      >
-        save
-      </button>
-    </form>
+    </Form>
   );
 };
 
@@ -133,6 +143,7 @@ const RestaurantlocationEditPage = () => {
   const [restaurantData, setRestaurantData] = useState();
   // const [isSaving, setIsSaving] = useState(false);
   const location = useLocation();
+  const navigate = useNavigate();
   const params = useParams();
 
   useEffect(() => {
@@ -171,6 +182,7 @@ const RestaurantlocationEditPage = () => {
       if (keyParts.length === 2) {
         console.log('value for multi part key: ', value);
         console.log('key parts: ', keyParts);
+        // Note: maybe destructure the object here using key parts?
         if (dataCopy[keyParts[0]]) {
           dataCopy[keyParts[0]][keyParts[1]] = value; // TODO: find a better to do this :'(
         } else {
@@ -207,7 +219,23 @@ const RestaurantlocationEditPage = () => {
   }, [restaurantData, resourceId]);
 
   return (
-    <div>
+    <div className='p-2'>
+      <PageHeader
+        heading={`${resourceId ? 'Edit Restaurant' : 'Add New Restaurant'}`}
+        subheading={`Resturant Name: ${restaurantData ? restaurantData.locationName : '[Name Not Set]'}`}
+        backButtonAction={() => navigate(-1)}
+        actionsContainer={
+          <React.Fragment>
+            <button
+              className='btn btn-primary'
+              onClick={onSaveAction}
+            >
+              <SaveIcon className='me-2' />
+              Save Restaurant
+            </button>
+          </React.Fragment>
+        }
+      />
       {renderEditForm({restaurantData, onEditFormData, onSaveAction})}
     </div>
   );
