@@ -1,4 +1,5 @@
 import moment from 'moment';
+import numeral from 'numeral';
 
 export const DATE_FORMATS = {
   SHORT: 'DD/MM/YYYY',
@@ -20,6 +21,16 @@ class FormattingUtils {
     if (!value) return 'Invalid Date!!!';
     return moment(value).format(format)
   };
+
+  /**
+   * @method formatAsMoney
+   * @param {String} value
+   * @returns {String|*}
+   * @description Given an input value, attempts to format it as money in the form $1,000.00 as an example
+   */
+  static formatAsMoney({value}) {
+    return numeral(value).format('$0,0.00');
+  }
 }
 
 export default FormattingUtils;

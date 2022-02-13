@@ -1,10 +1,12 @@
 import React, {useCallback, useEffect, useState} from 'react';
 import { useParams, useLocation, useNavigate } from 'react-router';
-import { Form } from 'react-bootstrap';
+import { Badge, Form } from 'react-bootstrap';
 import {CheckCircleFill as CheckIcon} from 'react-bootstrap-icons';
 import APIUtils from '../../utils/APIUtils';
 import { API_ENDPOINTS, ORDER_STATUSES } from '../../constants';
 import PageHeader from '../../components/PageHeader/PageHeader';
+import { ItemCard } from '../../components/ItemCard/ItemCard';
+import FormattingUtils from '../../utils/FormattingUtils';
 
 /**
  * @function UpdateStatusControl
@@ -59,6 +61,20 @@ const RenderContent = ({orderData, orderStatus, onUpdateStatus, updateStatusActi
     return <p>Order data unavailable</p>
   }
 
+  const orderItems = orderData.orderItems.map(item => (
+    <ItemCard
+      key={`item-${item._id}`}
+      title={item.itemName}
+      extraContent={
+        <React.Fragment>
+          <Badge bg='secondary'>
+            {FormattingUtils.formatAsMoney({value: item.itemCost})}
+          </Badge>
+        </React.Fragment>
+      }
+    />
+  ));
+
   return (
     <Form onSubmit={e => e.preventDefault()}>
       <label className='mb-2' htmlFor='order-delivery-notes'>
@@ -88,8 +104,17 @@ const RenderContent = ({orderData, orderStatus, onUpdateStatus, updateStatusActi
         disabled
         name='order-total'
         readOnly
-        value={`${orderData.orderTotal}`}
+        value={`${FormattingUtils.formatAsMoney({
+          value: orderData.orderTotal
+        })}`}
       />
+      <label>
+        <strong>Order Items: {orderData.orderItems.length}</strong>
+      </label>
+      <hr />
+      <div>
+        {orderItems}
+      </div>
     </Form>
   );
 };
