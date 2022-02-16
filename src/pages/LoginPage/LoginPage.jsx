@@ -1,6 +1,7 @@
 import React, {useCallback, useEffect, useState} from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router';
+import {Button, Card, Form} from 'react-bootstrap';
 import { loginUserAction } from '../../store/actions/appActions';
 import StorageUtils, {STORAGE_CONSTANTS} from '../../utils/StorageUtils';
 
@@ -44,29 +45,48 @@ const LoginPage = () => {
   }, [username, password, dispatch, navigate])
 
   return (
-    <div>
-      <p>Login to SuperAwesomeRestaurant Admin</p>
-      <input
-        disabled={appStore.isAuthenticating}
-        onChange={e => setUsername(e.target.value)}
-        placeholder='Username'
-        type='text'
-        value={username}
-      />
-      <input
-        disabled={appStore.isAuthenticating}
-        onChange={e => setPassword(e.target.value)}
-        placeholder='********'
-        type='password'
-        value={password}
-      />
-      <button
-        disabled={appStore.isAuthenticating}
-        onClick={onAuth}
-      >
-        Login
-      </button>
-    </div>
+    <Card className='container p-4' style={{width: '50%'}}>
+      <Card.Body>
+      <h4 className='text-center'>Login to SuperAwesomeRestaurant Admin</h4>
+      <Form onSubmit={e => e.preventDefault()}>
+        <Form.Group className='mb-3'>
+          <Form.Label htmlFor='username-field'>
+            Username *
+          </Form.Label>
+          <Form.Control
+            disabled={appStore.isAuthenticating}
+            onChange={e => setUsername(e.target.value)}
+            name='username-field'
+            placeholder='Username'
+            type='text'
+            value={username}
+          />
+        </Form.Group>
+        <Form.Group className='mb-3'>
+          <Form.Label htmlFor='password-field'>
+            Password *
+          </Form.Label>
+          <Form.Control
+            disabled={appStore.isAuthenticating}
+            onChange={e => setPassword(e.target.value)}
+            name='password-field'
+            placeholder='********'
+            type='password'
+            value={password}
+          />
+        </Form.Group>
+        <div className='d-grid'>
+          <Button
+            variant='success'
+            disabled={appStore.isAuthenticating}
+            onClick={onAuth}
+          >
+            Login
+          </Button>
+        </div>
+      </Form>
+      </Card.Body>
+    </Card>
   );
 };
 

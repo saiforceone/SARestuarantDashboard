@@ -1,5 +1,10 @@
 import axios from 'axios';
-import { APP_ACTIONS } from '../constants';
+import {
+  APP_ACTIONS,
+  MENU_ITEM_ACTIONS,
+  RESTAURANT_LOCATION_ACTIONS,
+  ORDER_ACTIONS
+} from '../constants';
 import { API_ENDPOINTS } from '../../constants';
 import ActionCreatorUtils from '../utils/ActionCreatorUtils';
 import StorageUtils, {STORAGE_CONSTANTS} from '../../utils/StorageUtils';
@@ -59,7 +64,7 @@ export const loginUserAction = ({username, password, navigate}) => {
         value: token,
       });
 
-      navigate('/dashboard', {replace: true});
+      navigate('/menu-items', {replace: true});
     } catch (e) {
       dispatch(ActionCreatorUtils.buildAction(
         APP_ACTIONS.SET_LAST_ERROR,
@@ -74,6 +79,47 @@ export const loginUserAction = ({username, password, navigate}) => {
 };
 
 /**
+ * @function checkSession
+ * @description Helper function that checks the user's current auth status for the nav header
+ * @returns {Function}
+ */
+export const checkSession = () => {
+  return async dispatch => {
+    try {
+      const currentTokenData = StorageUtils.getValueFromStorage({
+        key: STORAGE_CONSTANTS.KEY_AUTH_TOKEN,
+      });
+      
+      if (!currentTokenData.data) {
+        return false;
+      }
+
+      const headers = {
+        authorization: currentTokenData.data,
+      };
+
+      const url = `${API_ENDPOINTS.BASE}${API_ENDPOINTS.USER_CHECK}`;
+
+      const {data: responseData} = await axios.get(url, {headers});
+
+      console.log('check session responseData: ', responseData);
+      if (!responseData.success) {
+        return false;
+      }
+
+      dispatch(ActionCreatorUtils.buildAction(
+        APP_ACTIONS.SET_USER_PROFILE,
+        responseData.data
+      ));
+
+      return true;
+    } catch (e) {
+      return false;
+    }
+  }
+}
+
+/**
  * @function logoutAction
  * @param {Function} navigate
  * @returns {Function}
@@ -83,6 +129,15 @@ export const logoutAction = ({navigate}) => {
   return dispatch => {
     dispatch(ActionCreatorUtils.buildAction(
       APP_ACTIONS.UNSET_DATA,
+    ));
+    dispatch(ActionCreatorUtils.buildAction(
+      MENU_ITEM_ACTIONS.UNSET_DATA,
+    ));
+    dispatch(ActionCreatorUtils.buildAction(
+      RESTAURANT_LOCATION_ACTIONS.UNSET_DATA
+    ));
+    dispatch(ActionCreatorUtils.buildAction(
+      ORDER_ACTIONS.UNSET_DATA,
     ));
     StorageUtils.deleteValueUsingKey({
       key: STORAGE_CONSTANTS.KEY_AUTH_TOKEN,

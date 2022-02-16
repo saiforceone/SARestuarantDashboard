@@ -4,6 +4,7 @@ export const API_ENDPOINTS = {
   MENU_ITEMS: '/menu-items/',
   ORDERS: '/orders/',
   LOCATIONS: '/restaurant-locations/',
+  USER_CHECK: '/users/adm-check',
 };
 
 export const ORDER_STATUSES = [
