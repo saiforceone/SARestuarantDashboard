@@ -27,7 +27,7 @@ const renderForm = ({menuItemData, editDataAction}) => {
     );
   }
 
-  const content = MenuItemStructure().formFieldDefs.map(field => {
+  const content = MenuItemStructure().formFieldDefs.map((field, fieldIndex) => {
     let formField;
     if (field.fieldType === FIELD_TYPES.TEXT_ID) {
       formField = (
@@ -59,18 +59,18 @@ const renderForm = ({menuItemData, editDataAction}) => {
     }
 
     return (
-      <BootstrapForm.Group className='mb-3'>
+      <BootstrapForm.Group className='mb-3' key={`group-${fieldIndex}`}>
         {(field.valueKey === 'mainImage' && menuItemData['mainImage']) && (
-          <div>
+          <div key={`field-${field.valueKey}-${fieldIndex}`}>
             <img
-              className='img-fluid mb-3'
+              className='mb-3'
               style={{objectFit: 'cover', height: 400, width: '100%'}}
               src={menuItemData[field.valueKey]}
             />
           </div>
         )}
         {(field.valuekey === 'mainImage' && !menuItemData['mainImage']) && (
-          <div className='d-flex'>
+          <div key={`img-${field.valueKey}-${fieldIndex}`} className='d-flex'>
             <p>No image URL has been specified. Paste one below.</p>
           </div>
         )}
@@ -81,7 +81,7 @@ const renderForm = ({menuItemData, editDataAction}) => {
   });
 
   return (
-    <BootstrapForm fluid>
+    <BootstrapForm fluid={"true"}>
       {content}
     </BootstrapForm>
   );
@@ -105,8 +105,6 @@ export default function MenuItemEditPage() {
   const params = useParams();
 
   useEffect(() => {
-    console.log('params: ', params);
-    console.log('location: ', location);
     if (params.id) {
       setResourceId(params.id);
     }

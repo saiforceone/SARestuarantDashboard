@@ -102,7 +102,6 @@ export const checkSession = () => {
 
       const {data: responseData} = await axios.get(url, {headers});
 
-      console.log('check session responseData: ', responseData);
       if (!responseData.success) {
         return false;
       }

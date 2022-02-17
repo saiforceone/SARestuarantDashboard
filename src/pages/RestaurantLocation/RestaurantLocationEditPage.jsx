@@ -84,16 +84,25 @@ const renderEditForm = ({restaurantData, onEditFormData, onSaveAction}) => {
         }
 
         return (
-          <Form.Group>
-            <Form.Label className='text-decoration-underline'>{innerField.label}</Form.Label>
+          <Form.Group key={`form-group-inner-${innerField.valueKey}`}>
+            <Form.Label
+              className='text-decoration-underline'
+              key={`form-label-${innerField.valueKey}`}
+            >
+              {innerField.label}
+            </Form.Label>
             {innerFormControl}
           </Form.Group>
         );
       });
 
       return (
-        <div>
-          <Form.Label><strong>{field.label}</strong></Form.Label>
+        <div key={`inner-container-${index}`}>
+          <Form.Label
+            key={`inner-label-${index}`}
+          >
+            <strong>{field.label}</strong>
+          </Form.Label>
           {groupedFields}
         </div>
       );
@@ -117,7 +126,7 @@ const renderEditForm = ({restaurantData, onEditFormData, onSaveAction}) => {
     }
 
     return (
-      <Form.Group className='mb-4'>
+      <Form.Group className='mb-4' key={`field-group-${index}`}>
         <Form.Label><strong>{field.label}</strong></Form.Label>
         {formControl}
       </Form.Group>
@@ -152,14 +161,14 @@ const RestaurantlocationEditPage = () => {
     }
     
     const {state} = location;
-    console.log('state: ', state);
+
     if (state) {
       const {location: restaurantLocation} = state;
       if (restaurantLocation) {
         setRestaurantData(restaurantLocation);
         if(!resourceId) setResourceId(restaurantLocation._id);
       } else {
-        console.log('oops no location data');
+        alert('Something went wrong with loading restaurant data');
       }
     } else {
       setRestaurantData(RestaurantStructure().emptyData);
@@ -180,8 +189,6 @@ const RestaurantlocationEditPage = () => {
       // assume that keys split on '.'
       const keyParts = key.split('.');
       if (keyParts.length === 2) {
-        console.log('value for multi part key: ', value);
-        console.log('key parts: ', keyParts);
         // Note: maybe destructure the object here using key parts?
         if (dataCopy[keyParts[0]]) {
           dataCopy[keyParts[0]][keyParts[1]] = value; // TODO: find a better to do this :'(
@@ -189,7 +196,6 @@ const RestaurantlocationEditPage = () => {
           dataCopy[keyParts[0]] = {
             [keyParts[1]]: value
           };
-          console.log(dataCopy['contactDetails']);
         }
       }
     } else {
