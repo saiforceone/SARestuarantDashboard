@@ -147,10 +147,8 @@ const renderEditForm = ({restaurantData, onEditFormData, onSaveAction}) => {
  */
 const RestaurantlocationEditPage = () => {
 
-  // const [isNew, setIsNew] = useState(true);
   const [resourceId, setResourceId] = useState(undefined);
   const [restaurantData, setRestaurantData] = useState();
-  // const [isSaving, setIsSaving] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
   const params = useParams();
@@ -213,15 +211,28 @@ const RestaurantlocationEditPage = () => {
     if (!restaurantData || !Object.keys(restaurantData).length) {
       return alert('Unable to save data');
     }
+
     APIUtils.saveOrUpdateResource({
       endpoint: API_ENDPOINTS.LOCATIONS,
       id: resourceId,
       data: {data: restaurantData},
     }).then(response => {
       console.log('save restaraunt response: ', response);
+
+      alert(
+        response.success 
+          ? 'Successfully saved the restaurant location. You will be redirected to the listing automatically.'
+          : 'Well sh*t. That didn\'t work :('
+      );
+      
+      if (response.success) {
+        navigate('/restaurant-locations', {
+          replace: true,
+        });
+      }
     }).catch(error => {
-      console.log('save error: ', error);
-    })
+      alert(`There was an unexpected error. ${error}`);
+    });
   }, [restaurantData, resourceId]);
 
   return (

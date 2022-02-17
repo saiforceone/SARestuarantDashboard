@@ -56,6 +56,10 @@ const RestaurantLocationListPage = () => {
     getRestaurants();
   }, [getRestaurants]);
 
+  const navToAddNew = useCallback(() => {
+    navigate('/restaurant-locations/new');
+  }, [navigate]);
+
   /**
    * @function onEditLocation
    * @param {object} location - the location to be edited
@@ -71,7 +75,7 @@ const RestaurantLocationListPage = () => {
   }, [navigate]);
 
   return (
-    <div>
+    <div className='p-2'>
       <PageHeader
         heading='Restaurants'
         subheading={
@@ -81,6 +85,7 @@ const RestaurantLocationListPage = () => {
           <React.Fragment>
             <button
               className='btn btn-primary'
+              onClick={navToAddNew}
             >
               Add New Location
             </button>
